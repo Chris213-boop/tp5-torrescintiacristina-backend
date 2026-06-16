@@ -1,6 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const sequelize = require('./config/database');
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./swagger_output.json');
+
 var app = express();
 //middlewares
 app.use(express.json());
@@ -10,6 +14,9 @@ app.use('/api/socio', require('./src/routes/socio.route.js'));
 app.use('/api/transaccion', require('./src/routes/transaccion.route.js'));
 app.use('/api/empleado', require('./src/routes/empleado.route.js'));
 app.use('/api/publicacion', require('./src/routes/publicacion.route.js'));
+
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
 //setting
 app.set('port', process.env.PORT || 3000);
 // Sincronizar Base de Datos y arrancar el servidor

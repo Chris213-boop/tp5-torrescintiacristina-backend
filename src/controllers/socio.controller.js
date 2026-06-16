@@ -38,13 +38,21 @@ socioCtrl.deleteSocio = async (req, res) => {
 
 // Editar un socio
 socioCtrl.editSocio = async (req, res) => {
+    const data = req.body;
     try {
-        await Socio.update(req.body, {
-            where: { id: req.body.id }
-        });
-        res.json({ status: '1', msg: 'Socio modificado' });
-    } catch (error) {
-        res.status(400).json({ status: '0', msg: 'Error procesando la operacion' });
+        const socios = await Socio.findByPk(req.params.id);
+        if (socios) {
+            if (data.responsable && data.responsable.id) {
+                data.responsableId = data.responsable.id;
+            }
+            await socios.update(data);
+            res.status(200).json({ status: '1', msg: 'Socio actualizado' });
+        } else {
+            res.status(404).json({ status: '0', msg: 'Socio no encontrado' });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error al actualiza socio', error: error.message });
     }
 };
 
